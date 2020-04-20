@@ -165,6 +165,7 @@ void Cmd_Give_f (edict_t *ent)
 	}
 
 	name = gi.args();
+	gi.cprintf(ent, PRINT_HIGH, "name: [ %s ]\n",name);
 
 	if (Q_stricmp(name, "all") == 0)
 		give_all = true;
