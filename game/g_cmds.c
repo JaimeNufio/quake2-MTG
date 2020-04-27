@@ -144,6 +144,74 @@ void ValidateSelectedItem (edict_t *ent)
 
 /*
 ==================
+Cmd_Remove_f
+
+Jaime Nufio
+
+Remove Item from a client
+==================
+*/
+
+void Cmd_Remove_f(edict_t *ent){
+
+	char		*name;
+	gitem_t		*it;
+	int			index;
+	int			i;
+	qboolean	give_all;
+	edict_t		*it_ent;
+
+	gi.centerprintf(ent,"Test");
+
+	if (deathmatch->value && !sv_cheats->value)
+	{
+		gi.cprintf(ent, PRINT_HIGH, "You must run the server with '+set cheats 1' to enable this command.\n");
+		return;
+	}
+
+	name = gi.args();
+	gi.cprintf(ent, PRINT_HIGH, "name: [ %s ]\n", name);
+
+	//int inventorySpace = ent->client->pers.inventory.length;
+
+	// my code to search manually. 
+	//for (int i = 0; i <200; i++){
+	//	gi.cprintf(ent, PRINT_HIGH, "name: [ %d ]\n", ent->client->pers.inventory[i]);
+	//	ent->client->pers.inventory[i] = 0;
+	//}
+
+	it = FindItem(name);
+	if (!it)
+	{
+		name = gi.argv(1);
+		it = FindItem(name);
+		if (!it)
+		{
+			gi.cprintf(ent, PRINT_HIGH, "unknown item\n");
+			return;
+		}
+	}
+
+	if (!it->pickup)
+	{
+		gi.cprintf(ent, PRINT_HIGH, "non-pickup item\n");
+		return;
+	}
+
+	index = ITEM_INDEX(it);
+	gi.cprintf(ent, PRINT_HIGH, "Target: [%s]\nIndex Value: [%d]\nQuantities: [%d]\nInventory Slot: [%d]\nInventory State: [%d]",it->pickup_name,index,it->quantity,
+		index, ent->client->pers.inventory[index]);
+	ent->client->pers.inventory[index] = 0;//atoi(gi.argv(2));
+	ent->client->newweapon = ent->client->pers.weapon;
+	//ChangeWeapon(ent);
+	
+
+
+}
+
+
+/*
+==================
 Cmd_Give_f
 
 Give items to a client
@@ -259,6 +327,8 @@ void Cmd_Give_f (edict_t *ent)
 	}
 
 	it = FindItem (name);
+	//JAIME
+	//How to get item "class" from a name.
 	if (!it)
 	{
 		name = gi.argv(1);
@@ -295,6 +365,8 @@ void Cmd_Give_f (edict_t *ent)
 			G_FreeEdict(it_ent);
 	}
 }
+
+
 
 
 /*
@@ -950,6 +1022,8 @@ void ClientCommand (edict_t *ent)
 		Cmd_Drop_f (ent);
 	else if (Q_stricmp (cmd, "give") == 0)
 		Cmd_Give_f (ent);
+	else if (Q_stricmp(cmd, "minus") == 0)
+		Cmd_Remove_f(ent);
 	else if (Q_stricmp (cmd, "god") == 0)
 		Cmd_God_f (ent);
 	else if (Q_stricmp (cmd, "notarget") == 0)

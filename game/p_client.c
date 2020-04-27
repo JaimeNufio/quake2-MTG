@@ -604,15 +604,34 @@ This is only called when the game first initializes in single player,
 but is called after each death and level change in deathmatch
 ==============
 */
-void InitClientPersistant (gclient_t *client)
+void InitClientPersistant(gclient_t *client)
 {
 	gitem_t		*item;
 
-	memset (&client->pers, 0, sizeof(client->pers));
+	memset(&client->pers, 0, sizeof(client->pers));
 
+	//Jaime Nufio
+
+	//Initial Hand Array of items "Cards"
+	const char *hand[3];
+
+	//Hand TODO: Randomize this.
+	//Particularly annoying to have typos here.
+	hand[0] = "Shotgun";
+	hand[1] = "Rocket Launcher";
+	hand[2] = "Machinegun";
+
+	for (int i = 0; i < 2;i++){
+		item = FindItem(hand[i]);
+		client->pers.selected_item = ITEM_INDEX(item);
+		client->pers.inventory[client->pers.selected_item] = 1;
+	}
+
+	/*
 	item = FindItem("Blaster");
 	client->pers.selected_item = ITEM_INDEX(item);
 	client->pers.inventory[client->pers.selected_item] = 1;
+	*/
 
 	client->pers.weapon = item;
 
