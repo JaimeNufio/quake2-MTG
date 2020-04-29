@@ -233,6 +233,7 @@ NoAmmoWeaponChange
 */
 void NoAmmoWeaponChange (edict_t *ent)
 {
+	/*
 	if ( ent->client->pers.inventory[ITEM_INDEX(FindItem("slugs"))]
 		&&  ent->client->pers.inventory[ITEM_INDEX(FindItem("railgun"))] )
 	{
@@ -269,6 +270,7 @@ void NoAmmoWeaponChange (edict_t *ent)
 		ent->client->newweapon = FindItem ("shotgun");
 		return;
 	}
+	*/
 	ent->client->newweapon = FindItem ("blaster");
 }
 
@@ -324,13 +326,13 @@ void Use_Weapon (edict_t *ent, gitem_t *item)
 
 		if (!ent->client->pers.inventory[ammo_index])
 		{
-			gi.cprintf (ent, PRINT_HIGH, "No %s for %s.\n", ammo_item->pickup_name, item->pickup_name);
+			gi.cprintf (ent, PRINT_HIGH, "No %s Mana for %s.\n", ammo_item->pickup_name, item->pickup_name);
 			return;
 		}
 
 		if (ent->client->pers.inventory[ammo_index] < item->quantity)
 		{
-			gi.cprintf (ent, PRINT_HIGH, "Not enough %s for %s.\n", ammo_item->pickup_name, item->pickup_name);
+			gi.cprintf (ent, PRINT_HIGH, "Not enough %s Mana for %s.\n", ammo_item->pickup_name, item->pickup_name);
 			return;
 		}
 	}

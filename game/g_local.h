@@ -81,6 +81,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 #define BODY_QUEUE_SIZE		8
 
+
 typedef enum
 {
 	DAMAGE_NO,
@@ -210,6 +211,10 @@ typedef struct
 } gitem_armor_t;
 
 
+
+
+
+
 // gitem_t->flags
 #define	IT_WEAPON		1		// use makes active weapon
 #define	IT_AMMO			2
@@ -230,6 +235,9 @@ typedef struct
 #define WEAP_HYPERBLASTER		9 
 #define WEAP_RAILGUN			10
 #define WEAP_BFG				11
+
+#define ARR_SIZE(arr) ( sizeof((arr)) / sizeof((arr[0])) )
+
 
 typedef struct gitem_s
 {
@@ -590,6 +598,7 @@ typedef struct
 	fieldtype_t	type;
 	int		flags;
 } field_t;
+
 
 
 extern	field_t fields[];
@@ -1110,4 +1119,19 @@ struct edict_s
 	moveinfo_t		moveinfo;
 	monsterinfo_t	monsterinfo;
 };
+
+
+
+struct deck{
+	int index;
+	char *name;
+	char *spells[16];
+	char *mana[16];
+	void(*drawCard)(struct edict_s *ent); 
+	int (*discardCard)(struct edict *ent);
+	//Just in case this needs to be different....
+};
+
+extern int ourDeck;
+extern struct deck decks[];
 

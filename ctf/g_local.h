@@ -267,8 +267,6 @@ typedef struct gitem_s
 	char		*precaches;		// string of all models, sounds, and images this item will use
 } gitem_t;
 
-
-
 //
 // this structure is left intact through an entire game
 // it should be initialized at dll load time, and read/written to

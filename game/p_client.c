@@ -613,19 +613,44 @@ void InitClientPersistant(gclient_t *client)
 	//Jaime Nufio
 
 	//Initial Hand Array of items "Cards"
-	const char *hand[3];
+	//const char *hand[7];
 
+	int pos = 8; //item index of item to supply
+	int diceRoll = 0;
+	char *name;
+	//srand(42069);
+
+	ourDeck = 0; //TODO, modify how this is set.
+	for (int i = 0; i < 7; i++){
+		name = "Lightning Bolt";
+
+		if (rand() % 10 >= 4){ //60% chance to draw a spell
+			diceRoll = rand() % 4;
+			name = decks[ourDeck].spells[diceRoll];
+		}
+		else{
+			diceRoll = rand() % 2;
+			name = decks[ourDeck].mana[diceRoll];
+		}
+
+
+		item = FindItem(name);
+		client->pers.selected_item = ITEM_INDEX(item);
+		client->pers.inventory[client->pers.selected_item]++;
+	}
+
+
+	/*
 	//Hand TODO: Randomize this.
 	//Particularly annoying to have typos here.
-	hand[0] = "Shotgun";
-	hand[1] = "Rocket Launcher";
-	hand[2] = "Machinegun";
+	hand[0] = "Dark Ritual";//"Shotgun";
+	hand[1] = "Unsummon";//"Rocket Launcher";
+	hand[2] = "Ancestral Recall";//"Machinegun";
+	hand[3] = "Lightning Bolt";//"Blaster";
+	
 
-	for (int i = 0; i < 2;i++){
-		item = FindItem(hand[i]);
-		client->pers.selected_item = ITEM_INDEX(item);
-		client->pers.inventory[client->pers.selected_item] = 1;
-	}
+
+	*/
 
 	/*
 	item = FindItem("Blaster");
