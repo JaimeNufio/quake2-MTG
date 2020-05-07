@@ -650,7 +650,7 @@ char *single_statusbar =
 
 // health
 "xv	0 "
-"hnum "
+"hnum JaimeNufioTest"
 "xv	50 "
 "pic 0 "
 

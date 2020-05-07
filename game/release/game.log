@@ -1,15 +1,35 @@
-﻿Build started 4/29/2020 1:38:12 AM.
+﻿Build started 5/7/2020 2:32:10 AM.
      1>Project "C:\Users\jaime\Documents\Kehoe\quake2-full\game\game.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /Z7 /nologo /W4 /WX- /O2 /Oy- /D WIN32 /D NDEBUG /D _WINDOWS /D _VC80_UPGRADE=0x0600 /D _WINDLL /GF /Gm- /EHsc /MT /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo".\release\\" /Fd".\release\vc120.pdb" /Gd /TC /analyze- /errorReport:prompt p_weapon.c
-         p_weapon.c
-     1>c:\users\jaime\documents\kehoe\quake2-full\game\g_local.h(1131): warning C4115: 'edict' : named type definition in parentheses
-     1>p_weapon.c(581): warning C4100: 'held' : unreferenced formal parameter
-     1>p_weapon.c(581): warning C4100: 'ent' : unreferenced formal parameter
-     1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V120\Microsoft.CppBuild.targets(1186,5): warning MSB8012: TargetPath(C:\Users\jaime\Documents\Kehoe\quake2-full\game\.\..\release\game.dll) does not match the Linker's OutputFile property value (C:\Users\jaime\Documents\Kehoe\quake2-full\release\gamex86.dll). This may cause your project to build incorrectly. To correct this, please make sure that $(OutDir), $(TargetName) and $(TargetExt) property values match the value specified in %(Link.OutputFile).
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /Z7 /nologo /W4 /WX- /O2 /Oy- /D WIN32 /D NDEBUG /D _WINDOWS /D _VC80_UPGRADE=0x0600 /D _WINDLL /GF /Gm- /EHsc /MT /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo".\release\\" /Fd".\release\vc120.pdb" /Gd /TC /analyze- /errorReport:prompt g_items.c
+         g_items.c
+     1>c:\users\jaime\documents\kehoe\quake2-full\game\g_local.h(1135): warning C4115: 'edict' : named type definition in parentheses
+     1>g_items.c(45): warning C4211: nonstandard extension used : redefined extern to static
+     1>g_items.c(46): warning C4211: nonstandard extension used : redefined extern to static
+     1>g_items.c(47): warning C4211: nonstandard extension used : redefined extern to static
+     1>g_items.c(223): warning C4100: 'other' : unreferenced formal parameter
+     1>g_items.c(223): warning C4100: 'ent' : unreferenced formal parameter
+     1>g_items.c(264): warning C4100: 'other' : unreferenced formal parameter
+     1>g_items.c(264): warning C4100: 'ent' : unreferenced formal parameter
+     1>g_items.c(715): warning C4100: 'item' : unreferenced formal parameter
+     1>g_items.c(771): warning C4100: 'surf' : unreferenced formal parameter
+     1>g_items.c(771): warning C4100: 'plane' : unreferenced formal parameter
+     1>g_items.c(902): warning C4100: 'activator' : unreferenced formal parameter
+     1>g_items.c(902): warning C4100: 'other' : unreferenced formal parameter
+     1>g_items.c(2310): warning C4013: 'Cmd_CardsInHand_f' undefined; assuming extern returning int
+     1>g_items.c(2325): warning C4013: 'IndexByName' undefined; assuming extern returning int
+     1>g_items.c(2305): warning C4100: 'checkHand' : unreferenced formal parameter
+     1>g_items.c(2310): warning C4189: 'cardsInHand' : local variable is initialized but not referenced
+     1>g_items.c(2385): warning C4431: missing type specifier - int assumed. Note: C no longer supports default-int
+     1>g_items.c(2385): warning C4218: nonstandard extension used : must specify at least a storage class or a type
+     1>g_items.c(2414): warning C4028: formal parameter 1 different from declaration
+     1>g_items.c(2418): warning C4100: 'ent' : unreferenced formal parameter
+     1>c:\users\jaime\documents\kehoe\quake2-full\game\g_items.c(2424): warning C4715: 'IndexByName' : not all control paths return a value
+     1>c:\users\jaime\documents\kehoe\quake2-full\game\g_items.c(2366): warning C4715: 'discardCard' : not all control paths return a value
+     1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V120\Microsoft.CppBuild.targets(1186,5): warning MSB8012: TargetPath(C:\Users\jaime\Documents\Kehoe\quake2-full\Release\game.dll) does not match the Linker's OutputFile property value (C:\Users\jaime\Documents\Kehoe\quake2-full\release\gamex86.dll). This may cause your project to build incorrectly. To correct this, please make sure that $(OutDir), $(TargetName) and $(TargetExt) property values match the value specified in %(Link.OutputFile).
      1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\V120\Microsoft.CppBuild.targets(1188,5): warning MSB8012: TargetName(game) does not match the Linker's OutputFile property value (gamex86). This may cause your project to build incorrectly. To correct this, please make sure that $(OutDir), $(TargetName) and $(TargetExt) property values match the value specified in %(Link.OutputFile).
        Link:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"..\release\gamex86.dll" /INCREMENTAL:NO /NOLOGO winmm.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /DEF:".\game.def" /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /PDB:".\..\release\game.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /BASE:"0x20000000" /DYNAMICBASE /NXCOMPAT /IMPLIB:".\..\release\gamex86.lib" /MACHINE:X86 /SAFESEH /DLL .\release\g_ai.obj
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"..\release\gamex86.dll" /INCREMENTAL:NO /NOLOGO winmm.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /DEF:".\game.def" /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /PDB:"C:\Users\jaime\Documents\Kehoe\quake2-full\Release\game.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /BASE:"0x20000000" /DYNAMICBASE /NXCOMPAT /IMPLIB:".\..\release\gamex86.lib" /MACHINE:X86 /SAFESEH /DLL .\release\g_ai.obj
          .\release\g_chase.obj
          .\release\g_cmds.obj
          .\release\g_combat.obj
@@ -58,9 +78,9 @@
          .\release\p_weapon.obj
          .\release\q_shared.obj
             Creating library .\..\release\gamex86.lib and object .\..\release\gamex86.exp
-         game.vcxproj -> C:\Users\jaime\Documents\Kehoe\quake2-full\game\.\..\release\game.dll
+         game.vcxproj -> C:\Users\jaime\Documents\Kehoe\quake2-full\Release\game.dll
      1>Done Building Project "C:\Users\jaime\Documents\Kehoe\quake2-full\game\game.vcxproj" (Build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:00.74
+Time Elapsed 00:00:00.86

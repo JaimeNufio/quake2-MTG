@@ -26,6 +26,8 @@ void		Drop_Weapon(edict_t *ent, gitem_t *inv);
 
 void Weapon_Blaster(edict_t *ent);
 void Weapon_Shotgun(edict_t *ent);
+void Weapon_Fireball(edict_t *ent);
+void Weapon_SignInBlood(edict_t *ent);
 void Weapon_SuperShotgun(edict_t *ent);
 void Weapon_Machinegun(edict_t *ent);
 void Weapon_Chaingun(edict_t *ent);
@@ -1138,13 +1140,45 @@ void SpawnItem(edict_t *ent, gitem_t *item)
 		gi.modelindex(ent->model);
 }
 
+/*
+
+
+char		*classname;	// spawning name
+qboolean	(*pickup)(struct edict_s *ent, struct edict_s *other);
+void		(*use)(struct edict_s *ent, struct gitem_s *item);
+void		(*drop)(struct edict_s *ent, struct gitem_s *item);
+void		(*weaponthink)(struct edict_s *ent);
+char		*pickup_sound;
+char		*world_model;
+int			world_model_flags;
+char		*view_model;
+
+// client side info
+char		*icon;
+char		*pickup_name;	// for printing on pickup
+int			count_width;		// number of digits to display by icon
+
+int			quantity;		// for ammo how much, for weapons how much is used per shot
+char		*ammo;			// for weapons
+int			flags;			// IT_* flags
+
+int			weapmodel;		// weapon model index (for weapons)
+
+void		*info;
+int			tag;
+
+char		*precaches;		// string of all models, sounds, and images this item will use
+
+
+*/
+
 
 
 //======================================================================
 
 gitem_t	itemlist[] =
 {
-	{
+	{ //zero
 		NULL
 	},	// leave index 0 alone
 
@@ -1154,7 +1188,7 @@ gitem_t	itemlist[] =
 
 	/*QUAKED item_armor_body (.3 .3 1) (-16 -16 -16) (16 16 16)
 	*/
-	{
+	{ //one
 		"item_armor_body", 
 		Pickup_Armor,
 		NULL,
@@ -1177,7 +1211,7 @@ gitem_t	itemlist[] =
 
 	/*QUAKED item_armor_combat (.3 .3 1) (-16 -16 -16) (16 16 16)
 	*/
-	{
+	{ //two
 		"item_armor_combat",
 		Pickup_Armor,
 		NULL,
@@ -1200,7 +1234,7 @@ gitem_t	itemlist[] =
 
 	/*QUAKED item_armor_jacket (.3 .3 1) (-16 -16 -16) (16 16 16)
 	*/
-	{
+	{ //three
 		"item_armor_jacket",
 		Pickup_Armor,
 		NULL,
@@ -1223,7 +1257,7 @@ gitem_t	itemlist[] =
 
 	/*QUAKED item_armor_shard (.3 .3 1) (-16 -16 -16) (16 16 16)
 	*/
-	{
+	{ //four
 		"item_armor_shard",
 		Pickup_Armor,
 		NULL,
@@ -1247,7 +1281,7 @@ gitem_t	itemlist[] =
 
 	/*QUAKED item_power_screen (.3 .3 1) (-16 -16 -16) (16 16 16)
 	*/
-	{
+	{//five
 		"item_power_screen",
 		Pickup_PowerArmor,
 		Use_PowerArmor,
@@ -1270,7 +1304,7 @@ gitem_t	itemlist[] =
 
 	/*QUAKED item_power_shield (.3 .3 1) (-16 -16 -16) (16 16 16)
 	*/
-	{
+	{//six
 		"item_power_shield",
 		Pickup_PowerArmor,
 		Use_PowerArmor,
@@ -1299,7 +1333,7 @@ gitem_t	itemlist[] =
 	/* weapon_blaster (.3 .3 1) (-16 -16 -16) (16 16 16)
 	always owned, never in the world
 	*/
-	{
+	{ //7
 		"weapon_blaster",
 		NULL,
 		Use_Weapon,
@@ -1309,7 +1343,7 @@ gitem_t	itemlist[] =
 		NULL, 0,
 		"models/weapons/v_blast/tris.md2",
 		/* icon */		"w_blaster",
-		/* pickup */	"Blaster",
+		/* pickup */	"Grapeshot",
 		0,
 		0,
 		NULL,
@@ -1322,7 +1356,7 @@ gitem_t	itemlist[] =
 
 	/*QUAKED weapon_shotgun (.3 .3 1) (-16 -16 -16) (16 16 16)
 	*/
-	{
+	{ //8
 		"weapon_shotgun",
 		Pickup_Weapon,
 		Use_Weapon,
@@ -1343,9 +1377,50 @@ gitem_t	itemlist[] =
 		/* precache */ "weapons/shotgf1b.wav weapons/shotgr1b.wav"
 	},
 
+	{//9
+		"weapon_shotgun1",
+		Pickup_Weapon,
+		Use_Weapon,
+		Drop_Weapon,
+		Weapon_Fireball,
+		"misc/w_pkup.wav",
+		"models/weapons/g_shotg/tris.md2", EF_ROTATE,
+		"models/weapons/v_shotg/tris.md2",
+		/* icon */		"w_shotgun",
+		/* pickup */	"Fireball",
+		0,
+		1,
+		"Red",
+		IT_WEAPON | IT_STAY_COOP,
+		WEAP_SHOTGUN,
+		NULL,
+		0,
+		/* precache */ "weapons/shotgf1b.wav weapons/shotgr1b.wav"
+	},
+	{//10
+		"weapon_shotgun1",
+		Pickup_Weapon,
+		Use_Weapon,
+		Drop_Weapon,
+		Weapon_SignInBlood,
+		"misc/w_pkup.wav",
+		"models/weapons/g_shotg/tris.md2", EF_ROTATE,
+		"models/weapons/v_shotg/tris.md2",
+		/* icon */		"w_shotgun",
+		/* pickup */	"Sign in Blood",
+		0,
+		2,
+		"Black",
+		IT_WEAPON | IT_STAY_COOP,
+		WEAP_SHOTGUN,
+		NULL,
+		0,
+		/* precache */ "weapons/shotgf1b.wav weapons/shotgr1b.wav"
+	},
+
 	/*QUAKED weapon_supershotgun (.3 .3 1) (-16 -16 -16) (16 16 16)
 	*/
-	{
+	{//11
 		"weapon_supershotgun",
 		Pickup_Weapon,
 		Use_Weapon,
@@ -1368,7 +1443,7 @@ gitem_t	itemlist[] =
 
 	/*QUAKED weapon_machinegun (.3 .3 1) (-16 -16 -16) (16 16 16)
 	*/
-	{
+	{//12
 		"weapon_machinegun",
 		Pickup_Weapon,
 		Use_Weapon,
@@ -1391,7 +1466,7 @@ gitem_t	itemlist[] =
 
 	/*QUAKED weapon_chaingun (.3 .3 1) (-16 -16 -16) (16 16 16)
 	*/
-	{
+	{//13
 		"weapon_chaingun",
 		Pickup_Weapon,
 		Use_Weapon,
@@ -1401,9 +1476,9 @@ gitem_t	itemlist[] =
 		"models/weapons/g_chain/tris.md2", EF_ROTATE,
 		"models/weapons/v_chain/tris.md2",
 		/* icon */		"w_chaingun",
-		/* pickup */	"Tormenting Voices",
+		/* pickup */	"Goblin Lore",
 		0,
-		1,
+		2,
 		"Red",
 		IT_WEAPON | IT_STAY_COOP,
 		WEAP_CHAINGUN,
@@ -1414,7 +1489,7 @@ gitem_t	itemlist[] =
 
 	/*QUAKED ammo_grenades (.3 .3 1) (-16 -16 -16) (16 16 16)
 	*/
-	{
+	{//14
 		"ammo_grenades",
 		Pickup_Ammo,
 		Use_Weapon,
@@ -1424,43 +1499,20 @@ gitem_t	itemlist[] =
 		"models/items/ammo/grenades/medium/tris.md2", 0,
 		"models/weapons/v_handgr/tris.md2",
 		/* icon */		"a_grenades",
-		/* pickup */	"Grenades",
+		/* pickup */	"Fireball",
 		/* width */		3,
-		0,
-		"grenades",
+		1,
+		"Red",
 		IT_AMMO | IT_WEAPON,
 		WEAP_GRENADES,
 		NULL,
-		AMMO_GRENADES,
+		0,
 		/* precache */ "weapons/hgrent1a.wav weapons/hgrena1b.wav weapons/hgrenc1b.wav weapons/hgrenb1a.wav weapons/hgrenb2a.wav "
-	},
-
-	/*QUAKED weapon_grenadelauncher (.3 .3 1) (-16 -16 -16) (16 16 16)
-	*/
-	{
-		"weapon_grenadelauncher",
-		Pickup_Weapon,
-		Use_Weapon,
-		Drop_Weapon,
-		Weapon_GrenadeLauncher,
-		"misc/w_pkup.wav",
-		"models/weapons/g_launch/tris.md2", EF_ROTATE,
-		"models/weapons/v_launch/tris.md2",
-		/* icon */		"w_glauncher",
-		/* pickup */	"Island",
-		0,
-		0,
-		"Grenades",
-		IT_WEAPON | IT_STAY_COOP,
-		WEAP_GRENADELAUNCHER,
-		NULL,
-		0,
-		/* precache */ "models/objects/grenade/tris.md2 weapons/grenlf1a.wav weapons/grenlr1b.wav weapons/grenlb1b.wav"
 	},
 
 	/*QUAKED weapon_rocketlauncher (.3 .3 1) (-16 -16 -16) (16 16 16)
 	*/
-	{
+	{//15
 		"weapon_rocketlauncher",
 		Pickup_Weapon,
 		Use_Weapon,
@@ -1480,33 +1532,55 @@ gitem_t	itemlist[] =
 		0,
 		/* precache */ "models/objects/rocket/tris.md2 weapons/rockfly.wav weapons/rocklf1a.wav weapons/rocklr1b.wav models/objects/debris2/tris.md2"
 	},
-
-	/*QUAKED weapon_hyperblaster (.3 .3 1) (-16 -16 -16) (16 16 16)
-	*/
-	{
-		"weapon_hyperblaster",
+	/*QUAKED weapon_bfg (.3 .3 1) (-16 -16 -16) (16 16 16)
+	*/ //
+	{//16
+		"weapon_bfg",
 		Pickup_Weapon,
 		Use_Weapon,
 		Drop_Weapon,
-		Weapon_HyperBlaster,
+		Weapon_BFG,
 		"misc/w_pkup.wav",
-		"models/weapons/g_hyperb/tris.md2", EF_ROTATE,
-		"models/weapons/v_hyperb/tris.md2",
-		/* icon */		"w_hyperblaster",
-		/* pickup */	"Swamp",
+		"models/weapons/g_bfg/tris.md2", EF_ROTATE,
+		"models/weapons/v_bfg/tris.md2",
+		/* icon */		"w_bfg",
+		/* pickup */	"Cyclonic Rift",
 		0,
-		1,
-		"Cells",
+		6,
+		"Blue",
 		IT_WEAPON | IT_STAY_COOP,
-		WEAP_HYPERBLASTER,
+		WEAP_BFG,
 		NULL,
 		0,
-		/* precache */ "weapons/hyprbu1a.wav weapons/hyprbl1a.wav weapons/hyprbf1a.wav weapons/hyprbd1a.wav misc/lasfly.wav"
+		/* precache */ "sprites/s_bfg1.sp2 sprites/s_bfg2.sp2 sprites/s_bfg3.sp2 weapons/bfg__f1y.wav weapons/bfg__l1a.wav weapons/bfg__x1b.wav weapons/bfg_hum.wav"
 	},
 
-	/*QUAKED weapon_railgun (.3 .3 1) (-16 -16 -16) (16 16 16)
+	/*////////////////////////////////////////////////////////////////
+	Lands
+	/////////////////////////////////////////////////////////////////*/
+	/*QUAKED weapon_grenadelauncher (.3 .3 1) (-16 -16 -16) (16 16 16)
 	*/
-	{
+	{//17
+		"weapon_grenadelauncher",
+		Pickup_Weapon,
+		Use_Weapon,
+		Drop_Weapon,
+		Weapon_GrenadeLauncher,
+		"misc/w_pkup.wav",
+		"models/weapons/g_launch/tris.md2", EF_ROTATE,
+		"models/weapons/v_launch/tris.md2",
+		/* icon */		"w_glauncher",
+		/* pickup */	"Island",
+		0,
+		0,
+		"Blue",
+		IT_WEAPON | IT_STAY_COOP | JN_MANA,
+		WEAP_GRENADELAUNCHER,
+		NULL,
+		0,
+		/* precache */ "models/objects/grenade/tris.md2 weapons/grenlf1a.wav weapons/grenlr1b.wav weapons/grenlb1b.wav"
+	},
+	{//18
 		"weapon_railgun",
 		Pickup_Weapon,
 		Use_Weapon,
@@ -1518,68 +1592,41 @@ gitem_t	itemlist[] =
 		/* icon */		"w_railgun",
 		/* pickup */	"Mountain",
 		0,
-		1,
+		0,
 		"Slugs",
-		IT_WEAPON | IT_STAY_COOP,
+		IT_WEAPON | IT_STAY_COOP | JN_MANA,
 		WEAP_RAILGUN,
 		NULL,
 		0,
 		/* precache */ "weapons/rg_hum.wav"
 	},
 
-	/*QUAKED weapon_bfg (.3 .3 1) (-16 -16 -16) (16 16 16)
-	*/
-	{
-		"weapon_bfg",
+	{//19
+		"weapon_hyperblaster",
 		Pickup_Weapon,
 		Use_Weapon,
 		Drop_Weapon,
-		Weapon_BFG,
+		Weapon_HyperBlaster,
 		"misc/w_pkup.wav",
-		"models/weapons/g_bfg/tris.md2", EF_ROTATE,
-		"models/weapons/v_bfg/tris.md2",
-		/* icon */		"w_bfg",
-		/* pickup */	"Unsummon",
+		"models/weapons/g_hyperb/tris.md2", EF_ROTATE,
+		"models/weapons/v_hyperb/tris.md2",
+		/* icon */		"w_hyperblaster",
+		/* pickup */	"Swamp",
 		0,
-		50,
+		0,
 		"Cells",
-		IT_WEAPON | IT_STAY_COOP,
-		WEAP_BFG,
+		IT_WEAPON | IT_STAY_COOP | JN_MANA,
+		WEAP_HYPERBLASTER,
 		NULL,
 		0,
-		/* precache */ "sprites/s_bfg1.sp2 sprites/s_bfg2.sp2 sprites/s_bfg3.sp2 weapons/bfg__f1y.wav weapons/bfg__l1a.wav weapons/bfg__x1b.wav weapons/bfg_hum.wav"
+		/* precache */ "weapons/hyprbu1a.wav weapons/hyprbl1a.wav weapons/hyprbf1a.wav weapons/hyprbd1a.wav misc/lasfly.wav"
 	},
 
-	//
-	// AMMO ITEMS
-	//
-
-	/*QUAKED ammo_shells (.3 .3 1) (-16 -16 -16) (16 16 16)
-	*/
-	{
-		"ammo_shells",
-		Pickup_Ammo,
-		NULL,
-		Drop_Ammo,
-		NULL,
-		"misc/am_pkup.wav",
-		"models/items/ammo/shells/medium/tris.md2", 0,
-		NULL,
-		/* icon */		"a_shells",
-		/* pickup */	"Black",
-		/* width */		3,
-		10,
-		NULL,
-		IT_AMMO,
-		0,
-		NULL,
-		AMMO_SHELLS,
-		/* precache */ ""
-	},
-
-	/*QUAKED ammo_bullets (.3 .3 1) (-16 -16 -16) (16 16 16)
-	*/
-	{
+	/*////////////////////////////////////////////////////////////////
+		MANA SYMBOLS
+	/////////////////////////////////////////////////////////////////*/
+	
+	{ //Red  20
 		"ammo_bullets",
 		Pickup_Ammo,
 		NULL,
@@ -1591,7 +1638,7 @@ gitem_t	itemlist[] =
 		/* icon */		"a_bullets",
 		/* pickup */	"Red",
 		/* width */		3,
-		50,
+		0,
 		NULL,
 		IT_AMMO,
 		0,
@@ -1599,6 +1646,52 @@ gitem_t	itemlist[] =
 		AMMO_BULLETS,
 		/* precache */ ""
 	},
+
+	/*QUAKED ammo_rockets (.3 .3 1) (-16 -16 -16) (16 16 16)
+	*/ 
+	{ //21
+		"ammo_rockets",
+		Pickup_Ammo,
+		NULL,
+		Drop_Ammo,
+		NULL,
+		"misc/am_pkup.wav",
+		"models/items/ammo/rockets/medium/tris.md2", 0,
+		NULL,
+		/* icon */		"a_rockets",
+		/* pickup */	"Blue",
+		/* width */		3,
+		0, //Default ammo? was 5
+		NULL,
+		IT_AMMO,
+		0,
+		NULL,
+		AMMO_ROCKETS,
+		/* precache */ ""
+	},
+
+	{ //Black 22
+		"ammo_shells",
+		Pickup_Ammo,
+		NULL,
+		Drop_Ammo,
+		NULL,
+		"misc/am_pkup.wav",
+		"models/items/ammo/shells/medium/tris.md2", 0,
+		NULL,
+		/* icon */		"a_shells",
+		/* pickup */	"Black",
+		/* width */		3,
+		0,
+		NULL,
+		IT_AMMO,
+		0,
+		NULL,
+		AMMO_SHELLS,
+		/* precache */ ""
+	},
+
+
 
 	/*QUAKED ammo_cells (.3 .3 1) (-16 -16 -16) (16 16 16)
 	*/
@@ -1620,29 +1713,6 @@ gitem_t	itemlist[] =
 		0,
 		NULL,
 		AMMO_CELLS,
-		/* precache */ ""
-	},
-
-	/*QUAKED ammo_rockets (.3 .3 1) (-16 -16 -16) (16 16 16)
-	*/
-	{
-		"ammo_rockets",
-		Pickup_Ammo,
-		NULL,
-		Drop_Ammo,
-		NULL,
-		"misc/am_pkup.wav",
-		"models/items/ammo/rockets/medium/tris.md2", 0,
-		NULL,
-		/* icon */		"a_rockets",
-		/* pickup */	"Blue",
-		/* width */		3,
-		0, //Default ammo? was 5
-		NULL,
-		IT_AMMO,
-		0,
-		NULL,
-		AMMO_ROCKETS,
 		/* precache */ ""
 	},
 
@@ -2232,17 +2302,18 @@ void SetItemNames(void)
 //Deck Definition
 
 
-void drawCard(struct edict_s *ent){
+void drawCard(struct edict_s *ent, int checkHand){
 
 	
 	int pos = 8; //item index of item to supply
 	int diceRoll = 0;
+	int cardsInHand = Cmd_CardsInHand_f(ent, 0);
 	char *name;
 
 	name = "Lightning Bolt";
 
 	if (rand() % 10 >= 4){ //60% chance to draw a spell
-		diceRoll = rand() % 4;
+		diceRoll = rand() % 5;
 		name = decks[ourDeck].spells[diceRoll];
 	}
 	else{
@@ -2252,15 +2323,10 @@ void drawCard(struct edict_s *ent){
 
 
 	pos = IndexByName(ent,name);
+	ent->client->pers.inventory[pos] += 1;
 
-	//gi.cprintf(ent, PRINT_HIGH, "Drew: %s | Pos: %d| Roll: %d\n",name,pos,diceRoll);
+	gi.cprintf(ent,PRINT_HIGH,"Drew %s.\n",GetItemByIndex(pos)->pickup_name);
 
-	if (Cmd_CardsInHand_f(ent,0)<7){
-		ent->client->pers.inventory[pos] += 1;
-	}else{
-		//TODO? Force Discard?
-	//	gi.cprintf(ent, PRINT_HIGH, "Won't draw. 7 cards in hand.\n");
-	}
 }
 
 int discardCard(struct edict_s *ent){
@@ -2269,19 +2335,50 @@ int discardCard(struct edict_s *ent){
 	// 2 is the minimum so that we can discard another card. )
 
 	int pos;
-
+	int deletable = 0;
+	/*
 	if (Cmd_CardsInHand_f(ent) > 1){
-		for (int i = 7; i < 18; i++){
+		for (int i = 8; i < 23; i++){
 			if (ent->client->pers.inventory[i] > 0 ){
 				ent->client->pers.inventory[i]--;
 				pos = i;
+				break;
 			}
 		}
-		gi.cprintf(ent, PRINT_HIGH, "Discarded a %s.",GetItemByIndex(pos)->pickup_name);
+		
 		return 1; //Discarded something.
+		*/
+	if (Cmd_CardsInHand_f(ent)>1){
+		do{
+			pos = 8 + (rand() % 12);
+			if (ent->client->pers.inventory[pos] > 0 && pos != IndexByName(ent,"Goblin Lore")){
+				//Goblin Lore will, on ocassion, try to delete itself. Let's just avoid that.
+				deletable = 1;
+			}
+		} while(deletable < 1);
+		ent->client->pers.inventory[pos]--;
+		gi.cprintf(ent, PRINT_HIGH, "Discarded a %s.\n", GetItemByIndex(pos)->pickup_name);
+
 	}else{ // only 1 card 
-		gi.cprintf(ent, PRINT_HIGH, "No cards in hand, cannot discard.");
+		gi.cprintf(ent, PRINT_HIGH, "No cards in hand, cannot discard.\n");
 		return 0;
+	}
+}
+
+void toHandSize(struct edict_s *ent){
+	gi.dprintf("toHandSize()");
+	int excess = Cmd_CardsInHand_f(ent)-7;
+	
+	if (test){
+		gi.dprintf("Debug mode; will not discard hand.");
+		return;
+	}
+
+	if (excess > 0){
+		gi.cprintf(ent, PRINT_HIGH, "Discarding %d cards.", excess);
+		for (int i = 0; i < excess;i++){
+			discardCard(ent);
+		}
 	}
 }
 
@@ -2290,33 +2387,36 @@ ourDeck = 0;
 	{
 		0,
 		"Rakdos",
-		{ "Dark Ritual", "Doom Blade", "Lightning Bolt", "Goblin Lore" },
+		{ "Dark Ritual", "Doom Blade", "Lightning Bolt", "Goblin Lore","Sign in Blood" },
 		{ "Swamp", "Mountain" },
 		drawCard,
-		discardCard
+		discardCard,
+		toHandSize
 	},
 	{
 		1,
 		"Izzet",
-		{ "Ancestral Recall", "Unsummon", "Lightning Bolt", "Goblin Lore" },
+		{ "Ancestral Recall", "Cyclonic Rift", "Lightning Bolt", "Goblin Lore","FireBall" },
 		{ "Island", "Mountain" },
 		drawCard,
-		discardCard
+		discardCard,
+		toHandSize
 	},
 	{
 		2,
 		"Dimir",
-		{ "Dark Ritual", "Doom Blade", "Ancestral Recall", "Unsummon" },
+		{ "Dark Ritual", "Doom Blade", "Ancestral Recall", "Cyclonic Rift","Sign in Blood" },
 		{ "Swamp", "Island" },
 		drawCard,
-		discardCard
+		discardCard,
+		toHandSize
 	},
 };
 
 
 //Search index, by classname. Linear Search
  int IndexByName(struct edict_s *ent,char *name){
-	 for (int i = 8; i < 22;i++){
+	 for (int i = 8; i < 25;i++){
 		 if (Q_stricmp(GetItemByIndex(i)->pickup_name,name)==0){
 			 return i;
 		 }

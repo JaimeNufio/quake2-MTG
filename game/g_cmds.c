@@ -161,51 +161,6 @@ void Cmd_Remove_f(edict_t *ent){
 	qboolean	give_all;
 	edict_t		*it_ent;
 
-	gi.centerprintf(ent,"Test");
-
-	if (deathmatch->value && !sv_cheats->value)
-	{
-		gi.cprintf(ent, PRINT_HIGH, "You must run the server with '+set cheats 1' to enable this command.\n");
-		return;
-	}
-
-	name = gi.args();
-	gi.cprintf(ent, PRINT_HIGH, "name: [ %s ]\n", name);
-
-	//int inventorySpace = ent->client->pers.inventory.length;
-
-	// my code to search manually. 
-	//for (int i = 0; i <200; i++){
-	//	gi.cprintf(ent, PRINT_HIGH, "name: [ %d ]\n", ent->client->pers.inventory[i]);
-	//	ent->client->pers.inventory[i] = 0;
-	//}
-
-	it = FindItem(name);
-	if (!it)
-	{
-		name = gi.argv(1);
-		it = FindItem(name);
-		if (!it)
-		{
-			gi.cprintf(ent, PRINT_HIGH, "unknown item\n");
-			return;
-		}
-	}
-
-	if (!it->pickup)
-	{
-		gi.cprintf(ent, PRINT_HIGH, "non-pickup item\n");
-		return;
-	}
-
-	index = ITEM_INDEX(it);
-	gi.cprintf(ent, PRINT_HIGH, "Target: [%s]\nIndex Value: [%d]\nQuantities: [%d]\nInventory Slot: [%d]\nInventory State: [%d]",it->pickup_name,index,it->quantity,
-		index, ent->client->pers.inventory[index]);
-	ent->client->pers.inventory[index] = 0;//atoi(gi.argv(2));
-	ent->client->newweapon = ent->client->pers.weapon;
-	//ChangeWeapon(ent);
-	
-
 
 }
 
@@ -378,21 +333,30 @@ Deck Debug, print deck.
 void Cmd_ViewDeck_f(edict_t *ent){
 
 	int temp = ourDeck;
-	gi.cprintf(ent, PRINT_HIGH, "Current Library: %s\n\nAll Decks:", decks[ourDeck].name);
+	gi.cprintf(ent, PRINT_HIGH, "Current Library: %s\n\nAll Decks:\n", decks[ourDeck].name);
 
 	for (int j = 0; j < 3; j++){
 		ourDeck = j;
-		gi.cprintf(ent, PRINT_HIGH,"Library: %s\n", decks[ourDeck].name);
-		gi.cprintf(ent, PRINT_HIGH, "\tLands:\n");
+		gi.cprintf(ent, PRINT_HIGH,"The %s Deck\n", decks[ourDeck].name);
+		gi.cprintf(ent, PRINT_HIGH, "  Lands:\n");
 		for (int i = 0; i < (2); i++){
-			gi.cprintf(ent, PRINT_HIGH, "\t\t%d) %s\n", i + 1, decks[ourDeck].mana[i]);
+			gi.cprintf(ent, PRINT_HIGH, "  %d) %s |", i + 1, decks[ourDeck].mana[i]);
 		}
-		gi.cprintf(ent, PRINT_HIGH, "\tSpells:\n");
+		gi.cprintf(ent, PRINT_HIGH, "  Spells:\n");
 		for (int i = 0; i < (4); i++){
-			gi.cprintf(ent, PRINT_HIGH, "\t\t%d) %s\n", i + 1, decks[ourDeck].spells[i]);
+			gi.cprintf(ent, PRINT_HIGH, "  %d) %s |", i + 1, decks[ourDeck].spells[i]);
 		}
 	}
 	ourDeck = temp;
+}
+
+void Cmd_DebugToggle_f(edict_t *ent){
+	if (test == 0){
+		test = 1;
+	}else {
+		test = 0;
+	}
+	gi.dprintf("Debug State: %d\n",test);
 }
 
 /*
@@ -419,21 +383,59 @@ int Cmd_CardsInHand_f(edict_t *ent,int mode){
 
 	int cardCnt = 0,manaCnt = 0;
 
-	for (int i = 8; i < 18; i++){
+	for (int i = 8; i < 20; i++){
 		cardCnt += ent->client->pers.inventory[i];
 	}
 
 	if (mode){
 		gi.cprintf(ent, PRINT_HIGH, "Cards Counted: %d\n", cardCnt);
 	}
-	for (int i = 18; i < 22; i++){
-		manaCnt += ent->client->pers.inventory[i];
-	}
 	if (mode){
+		for (int i = 20; i < 22; i++){
+			manaCnt += ent->client->pers.inventory[i];
+		}
 		gi.cprintf(ent, PRINT_HIGH, "Mana in Mana Pool: %d\n", manaCnt);
 	}
 
 	return cardCnt;
+}
+
+/*
+==================
+Cmd_demo_f
+
+Utility to count cards in hand.
+==================
+*/
+void Cmd_Demo_f(edict_t *ent){
+
+	for (int i = 8; i < 20; i++){
+		ent->client->pers.inventory[i] = 2;
+	}
+	for (int i = 20; i < 23; i++){
+		ent->client->pers.inventory[i] = 10;
+	}
+	gi.cprintf(ent, PRINT_HIGH, "Demo Items Distrubted.");
+
+	maxBlack=ent->client->pers.inventory[ITEM_INDEX(FindItem("Black"))];
+	maxBlue = ent->client->pers.inventory[ITEM_INDEX(FindItem("Blue"))];
+	maxRed = ent->client->pers.inventory[ITEM_INDEX(FindItem("Red"))];
+
+	//return cardCnt;
+}
+
+/*
+==================
+Cmd_Lands_f
+
+Utility to count cards in hand.
+==================
+*/
+void Cmd_Lands_f(edict_t *ent){
+
+
+	gi.cprintf(ent, PRINT_HIGH, "Islands: %d, Swamps: %d, Mountains: %d\n", maxBlue,maxBlack,maxRed);
+
 }
 
 
@@ -446,8 +448,8 @@ Utility to handle card draw.
 */
 int Cmd_DrawCard_f(edict_t *ent){
 
-	gi.cprintf(ent, PRINT_HIGH, "Drawing %s cards.\n", gi.args());
-	int count = atoi(gi.args());
+	//gi.cprintf(ent, PRINT_HIGH, "Drawing %s cards.\n", gi.args());
+	int count = 1; // = atoi(gi.args());
 	
 
 	for (int i = 0; i < count; i++){
@@ -458,7 +460,7 @@ int Cmd_DrawCard_f(edict_t *ent){
 
 /*
 ==================
-Cmd_DrawCard_f
+Cmd_DiscardCard_f
 
 Utility to handle card discard.
 Random discard b/c... fuck it.
@@ -473,55 +475,6 @@ int Cmd_DiscardCard_f(edict_t *ent){
 }
 
 
-//Jaime Nufio
-/*
-==================
-Cmd_Add_f
-
-Add mana to your mana pool
-
-add 5 black
-==================
-*/
-void Cmd_Add_f(edict_t *ent)
-{
-	char		*name;
-	gitem_t		*it;
-	int			index;
-	int			i;
-	qboolean	give_all;
-	edict_t		*it_ent;
-
-	if (deathmatch->value && !sv_cheats->value)
-	{
-		gi.cprintf(ent, PRINT_HIGH, "You must run the server with '+set cheats 1' to enable this command.\n");
-		return;
-	}
-
-
-	gi.cprintf(ent, PRINT_HIGH, "Got: [%s]\n",gi.args());
-
-	name = strtok(gi.args()," ");
-	name = strtok(NULL, " ");
-	gi.cprintf(ent, PRINT_HIGH, "name: [ %s ]\n", name);
-
-	index = ITEM_INDEX(name);
-	
-
-		for (i = 0; i<game.num_items; i++)
-		{
-			it = itemlist + i;
-			if (!it->pickup)
-				continue;
-			if (it->flags & IT_AMMO)
-				if (gi.argc() == 3)
-					ent->client->pers.inventory[index] = atoi(gi.argv(1));
-				else
-					ent->client->pers.inventory[index] += it->quantity;
-			//Add_Ammo(ent, it, 1000);
-		}
-	
-}
 
 
 
@@ -623,8 +576,9 @@ Cmd_Use_f
 Use an inventory item
 ==================
 */
-void Cmd_Use_f (edict_t *ent)
-{
+void Cmd_Use_f (edict_t *ent){
+
+	//gi.cprintf(ent,PRINT_HIGH,"Cmd_Use_f:");
 	int			index;
 	gitem_t		*it;
 	char		*s;
@@ -644,7 +598,7 @@ void Cmd_Use_f (edict_t *ent)
 	index = ITEM_INDEX(it);
 	if (!ent->client->pers.inventory[index])
 	{
-		gi.cprintf (ent, PRINT_HIGH, "Out of item: %s\n", s);
+		gi.cprintf (ent, PRINT_HIGH, "%s is not in your hand.\n", s);
 		return;
 	}
 
@@ -1173,8 +1127,10 @@ void ClientCommand (edict_t *ent)
 	if (level.intermissiontime)
 		return;
 
-	if (Q_stricmp (cmd, "use") == 0)
-		Cmd_Use_f (ent);
+	if (Q_stricmp(cmd, "use") == 0)
+		Cmd_Use_f(ent);
+	else  if (Q_stricmp(cmd, "debug") == 0)
+		Cmd_DebugToggle_f(ent);
 	else if (Q_stricmp (cmd, "drop") == 0)
 		Cmd_Drop_f (ent);
 	else if (Q_stricmp(cmd, "viewdeck") == 0)
@@ -1182,15 +1138,17 @@ void ClientCommand (edict_t *ent)
 	else if (Q_stricmp(cmd, "setdeck") == 0)
 		Cmd_SetDeck_f(ent);
 	else if (Q_stricmp(cmd, "countdeck") == 0)
-		Cmd_CardsInHand_f(ent,1);
+		Cmd_CardsInHand_f(ent, 1);
+	else if (Q_stricmp(cmd,"lands") == 0)
+		Cmd_Lands_f(ent);
 	else if (Q_stricmp(cmd, "draw") == 0)
 		Cmd_DrawCard_f(ent);
 	else if (Q_stricmp(cmd, "discard") == 0)
 		Cmd_DiscardCard_f(ent);
+	else if (Q_stricmp(cmd, "demo") == 0)
+		Cmd_Demo_f(ent);
 	else if (Q_stricmp (cmd, "give") == 0)
 		Cmd_Give_f (ent);
-	else if (Q_stricmp(cmd, "add") == 0)
-		Cmd_Add_f(ent);
 	else if (Q_stricmp(cmd, "minus") == 0)
 		Cmd_Remove_f(ent);
 	else if (Q_stricmp (cmd, "god") == 0)

@@ -28,13 +28,48 @@ static byte		is_silenced;
 
 
 void weapon_grenade_fire(edict_t *ent, qboolean held);
+void NoAmmoWeaponChange(edict_t *ent);
 
-void addMana(edict_t *ent, char *color){
+void addMana(edict_t *ent, char *color, char *land){
+
 	gitem_t *item = FindItem(color);
+
+	if (Q_stricmp(color,"Red")==0){
+		maxRed++;
+	}else if (Q_stricmp(color,"Black")==0){
+		maxBlack++;
+	}else if (Q_stricmp(color,"Blue")==0){
+		maxBlue++;
+	}
+
 	ent->client->pers.selected_item = ITEM_INDEX(item);
 	ent->client->pers.inventory[ent->client->pers.selected_item]++;
-	gi.cprintf(ent,PRINT_HIGH,"Added %s Mana.\n",color);
+	gi.cprintf(ent,PRINT_HIGH,"Added %s Mana from a %s.\n",color,land);
+
+	ent->client->ps.gunframe++;
+	int pos = ITEM_INDEX(FindItem(land));
+
+	//gi.dprintf("User is holding -> pos: %d | name: %s \n",pos,"");
+
+	if (ent->client->pers.inventory[pos] > 0){
+		ent->client->pers.inventory[pos]--;
+		gi.dprintf(ent, PRINT_HIGH, "Should've removed the weapon.\n");
+	}
+	if (ent->client->pers.inventory[pos] == 0){
+		NoAmmoWeaponChange(ent);
+	}
 }
+
+void addManaTemp(edict_t *ent, char *color,int cnt){
+
+	gitem_t *item = FindItem(color);
+
+	ent->client->pers.selected_item = ITEM_INDEX(item);
+	ent->client->pers.inventory[ent->client->pers.selected_item]+=cnt;
+	gi.cprintf(ent, PRINT_HIGH, "Added %d temp %s mana.\n",cnt, color);
+
+}
+
 
 
 static void P_ProjectSource(gclient_t *client, vec3_t point, vec3_t distance, vec3_t forward, vec3_t right, vec3_t result)
@@ -167,7 +202,7 @@ qboolean Pickup_Weapon(edict_t *ent, edict_t *other)
 
 	if (other->client->pers.weapon != ent->item &&
 		(other->client->pers.inventory[index] == 1) &&
-		(!deathmatch->value || other->client->pers.weapon == FindItem("blaster")))
+		(!deathmatch->value || other->client->pers.weapon == FindItem("grapeshot")))
 		other->client->newweapon = ent->item;
 
 	return true;
@@ -245,8 +280,7 @@ NoAmmoWeaponChange
 
 //Jaime Nufio
 //Found the crash, update weapon ammo types.
-void NoAmmoWeaponChange(edict_t *ent)
-{
+void NoAmmoWeaponChange(edict_t *ent){
 	/*
 	if (ent->client->pers.inventory[ITEM_INDEX(FindItem("slugs"))]
 		&& ent->client->pers.inventory[ITEM_INDEX(FindItem("railgun"))])
@@ -287,15 +321,15 @@ void NoAmmoWeaponChange(edict_t *ent)
 	*/
 	//ent->client->pers.inventory[ITEM_INDEX(FindItem(ent->client->pers.weapon))]--;
 
-
-	gi.cprintf(ent, PRINT_HIGH, "Mana: [W: %d] [U: %d] [B: %d] [R: %d] [G: %d] \n", 0, ent->client->pers.inventory[ITEM_INDEX(FindItem("blue"))],
-		ent->client->pers.inventory[ITEM_INDEX(FindItem("black"))], ent->client->pers.inventory[ITEM_INDEX(FindItem("red"))],0);
+	//LIKE THE ONE LINE I USE
+	//gi.cprintf(ent, PRINT_HIGH, "Mana: [W: %d] [U: %d] [B: %d] [R: %d] [G: %d] \n", 0, ent->client->pers.inventory[ITEM_INDEX(FindItem("blue"))],
+	//	ent->client->pers.inventory[ITEM_INDEX(FindItem("black"))], ent->client->pers.inventory[ITEM_INDEX(FindItem("red"))],0);
 	
 	
 	//gi.cprintf(ent, PRINT_HIGH, "No %s Mana for %s.\n", ammo_item->pickup_name, item->pickup_name);
 
 	//ent->client->newweapon = NULL;
-	ent->client->newweapon = FindItem("blaster");
+	ent->client->newweapon = FindItem("grapeshot");
 }
 
 /*
@@ -343,27 +377,59 @@ void Use_Weapon(edict_t *ent, gitem_t *item)
 	if (item == ent->client->pers.weapon)
 		return;
 
-	if (item->ammo && !g_select_empty->value && !(item->flags & IT_AMMO))
+	if (item->ammo && !g_select_empty->value && !(item->flags & IT_AMMO) && !(item->flags & JN_MANA))
 	{
 		ammo_item = FindItem(item->ammo);
 		ammo_index = ITEM_INDEX(ammo_item);
 
-		if (!ent->client->pers.inventory[ammo_index])
+		if (!ent->client->pers.inventory[ammo_index] && ammo_index)
 		{
-			gi.cprintf(ent, PRINT_HIGH, "No %s Mana for %s.\n", ammo_item->pickup_name, item->pickup_name);
+			gi.cprintf(ent, PRINT_HIGH, "Lack %s mana to cast %s. [%d/%d]\n", ammo_item->pickup_name, item->pickup_name,
+				ent->client->pers.inventory[ammo_index],item->quantity);
 			return;
 		}
 
 		if (ent->client->pers.inventory[ammo_index] < item->quantity)
 		{
-			gi.cprintf(ent, PRINT_HIGH, "Not enough %s Mana for %s.\n", ammo_item->pickup_name, item->pickup_name);
+			gi.cprintf(ent, PRINT_HIGH, "Lack %s mana to cast %s. [%d/%d]\n", ammo_item->pickup_name, item->pickup_name,
+				ent->client->pers.inventory[ammo_index], item->quantity);
 			return;
 		}
+	}
+
+	if (item->flags & JN_MANA){
+		gi.cprintf(ent, PRINT_HIGH, "Basic Land - %s\n",item->pickup_name);
+	}
+	else{
+		gi.cprintf(ent, PRINT_HIGH, "Holding: %s\n", item->pickup_name);
+		/*
+		char *buffer[15];
+		char *color = item->pickup_name;
+		char *icon[3];
+
+		if ((Q_stricmp(color, "Island") == 0)){
+			sprintf(icon, "{U}", 3);
+		}
+		else if ((Q_stricmp(color, "Mountain") == 0)){
+			sprintf(icon, "{R}", 3);
+		}
+		else if ((Q_stricmp(color, "Swamp") == 0)){
+			sprintf(icon, "{B}", 3);
+		}
+
+		sprintf(buffer, " ", 1);
+		for (int i = 0; i <item->quantity; i++){
+			strcat(buffer, icon);
+		}
+
+		gi.cprintf(ent, PRINT_HIGH, "Holding: %s-%s\n", item->pickup_name,buffer);
+		*/
 	}
 
 	// change to this weapon when down
 	ent->client->newweapon = item;
 }
+
 
 
 
@@ -744,10 +810,15 @@ GRENADE LAUNCHER
 ======================================================================
 */
 
-void weapon_grenadelauncher_fire(edict_t *ent)
-{
-	addMana(ent, "Blue");
-	ent->client->ps.gunframe++;
+void weapon_grenadelauncher_fire(edict_t *ent){
+
+	//char *color, *Land;
+	//color = "Blue", Land = "Island";
+
+	addMana(ent, "Blue","Island");
+	///////////////////////////////////////////////
+
+
 
 	/*
 	vec3_t	offset;
@@ -822,8 +893,8 @@ void Weapon_RocketLauncher_Fire(edict_t *ent)
 	ent->client->kick_angles[0] = -1;
 
 	VectorSet(offset, 8, 8, ent->viewheight - 8);
-	P_ProjectSource(ent->client, ent->s.origin, offset, forward, right, start);
-	fire_rocket(ent, start, forward, damage, 650, damage_radius, radius_damage);
+	//P_ProjectSource(ent->client, ent->s.origin, offset, forward, right, start);
+	//fire_rocket(ent, start, forward, damage, 650, damage_radius, radius_damage);
 
 	// send muzzle flash
 	gi.WriteByte(svc_muzzleflash);
@@ -834,6 +905,10 @@ void Weapon_RocketLauncher_Fire(edict_t *ent)
 	ent->client->ps.gunframe++;
 
 	PlayerNoise(ent, start, PNOISE_WEAPON);
+
+	for (int i = 0; i < 3; i++){
+		decks[ourDeck].drawCard(ent,1);
+	}
 
 	if (!((int)dmflags->value & DF_INFINITE_AMMO)){
 
@@ -885,8 +960,13 @@ void Blaster_Fire(edict_t *ent, vec3_t g_offset, int damage, qboolean hyper, int
 
 	VectorScale(forward, -2, ent->client->kick_origin);
 	ent->client->kick_angles[0] = -1;
+	stormCount++;
 
-	fire_blaster(ent, start, forward, damage, 1000, effect, hyper);
+	for (int i = 0; i < stormCount/3;i++){
+		fire_blaster(ent, start, forward, 1, 1000-(i*10), effect, hyper);
+		fire_blaster(ent, start, forward, 0, 1000 - (i * 10), EF_GRENADE, hyper);
+		fire_blaster(ent, start, forward, 0, 1000 - (i * 10), EF_GIB, hyper);
+	}
 
 	// send muzzle flash
 	gi.WriteByte(svc_muzzleflash);
@@ -903,27 +983,30 @@ void Blaster_Fire(edict_t *ent, vec3_t g_offset, int damage, qboolean hyper, int
 
 void Weapon_Blaster_Fire(edict_t *ent)
 {
-	int		damage;
+	int damage = 2;
 
-	if (deathmatch->value)
-		damage = 15;
-	else
-		damage = 10;
-	Blaster_Fire(ent, vec3_origin, damage, false, EF_BLASTER);
+
+	Blaster_Fire(ent, vec3_origin, damage, false, EF_BFG);
 	ent->client->ps.gunframe++;
 }
 
 void Weapon_Blaster(edict_t *ent)
 {
 	static int	pause_frames[] = { 19, 32, 0 };
-	static int	fire_frames[] = { 5, 6, 7, 0 };
+	static int	fire_frames[] = { 5, 0 };
 
 	Weapon_Generic(ent, 4, 8, 52, 55, pause_frames, fire_frames, Weapon_Blaster_Fire);
 }
 
 
-void Weapon_HyperBlaster_Fire(edict_t *ent)
-{
+void Weapon_HyperBlaster_Fire(edict_t *ent){
+
+	//Jaime Nufio///////////////////////////////////
+	addMana(ent, "Black","Swamp");
+
+	///////////////////////////////////////////////
+
+	/*
 	float	rotation;
 	vec3_t	offset;
 	int		effect;
@@ -988,13 +1071,14 @@ void Weapon_HyperBlaster_Fire(edict_t *ent)
 		gi.sound(ent, CHAN_AUTO, gi.soundindex("weapons/hyprbd1a.wav"), 1, ATTN_NORM, 0);
 		ent->client->weapon_sound = 0;
 	}
+	*/
 
 }
 
 void Weapon_HyperBlaster(edict_t *ent)
 {
 	static int	pause_frames[] = { 0 };
-	static int	fire_frames[] = { 6, 7, 8, 9, 10, 11, 0 };
+	static int	fire_frames[] = { 6, 0 }; //{ 6, 7, 8, 9, 10, 11, 0 };
 
 	Weapon_Generic(ent, 5, 20, 49, 53, pause_frames, fire_frames, Weapon_HyperBlaster_Fire);
 }
@@ -1023,6 +1107,7 @@ void Machinegun_Fire(edict_t *ent)
 		ent->client->ps.gunframe++;
 		return;
 	}
+
 
 	if (ent->client->ps.gunframe == 5)
 		ent->client->ps.gunframe = 4;
@@ -1068,7 +1153,7 @@ void Machinegun_Fire(edict_t *ent)
 	AngleVectors(angles, forward, right, NULL);
 	VectorSet(offset, 0, 8, ent->viewheight - 8);
 	P_ProjectSource(ent->client, ent->s.origin, offset, forward, right, start);
-	fire_bullet(ent, start, forward, damage, kick, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, MOD_MACHINEGUN);
+	fire_bullet(ent, start, forward, damage*10, kick, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, MOD_MACHINEGUN);
 
 	gi.WriteByte(svc_muzzleflash);
 	gi.WriteShort(ent - g_edicts);
@@ -1114,6 +1199,7 @@ void Weapon_Machinegun(edict_t *ent)
 
 void Chaingun_Fire(edict_t *ent)
 {
+	/*
 	int			i;
 	int			shots;
 	vec3_t		start;
@@ -1123,6 +1209,7 @@ void Chaingun_Fire(edict_t *ent)
 	int			damage;
 	int			kick = 2;
 
+	
 	if (deathmatch->value)
 		damage = 6;
 	else
@@ -1217,7 +1304,7 @@ void Chaingun_Fire(edict_t *ent)
 		P_ProjectSource(ent->client, ent->s.origin, offset, forward, right, start);
 
 		fire_bullet(ent, start, forward, damage, kick, DEFAULT_BULLET_HSPREAD, DEFAULT_BULLET_VSPREAD, MOD_CHAINGUN);
-	}
+	} 
 
 	// send muzzle flash
 	gi.WriteByte(svc_muzzleflash);
@@ -1226,15 +1313,24 @@ void Chaingun_Fire(edict_t *ent)
 	gi.multicast(ent->s.origin, MULTICAST_PVS);
 
 	PlayerNoise(ent, start, PNOISE_WEAPON);
+	*/
 
-	if (!((int)dmflags->value & DF_INFINITE_AMMO))
-		ent->client->pers.inventory[ent->client->ammo_index] -= shots;
+	//if (!((int)dmflags->value & DF_INFINITE_AMMO))
+	//	ent->client->pers.inventory[ent->client->ammo_index] -= shots;
 
 	//Jaime Nufio Code To Drop a weapon on each click
 	////////////////////////////////////////////////
+ent->client->ps.gunframe++;
+
 	int pos = ITEM_INDEX(ent->client->pers.weapon);
 
 	if (ent->client->pers.inventory[pos] > 0){
+		for (int i = 0; i < 4; i++){
+			decks[ourDeck].drawCard(ent,0);
+		}
+		for (int i = 0; i < 3; i++){
+			decks[ourDeck].discardCard(ent);
+		}
 		ent->client->pers.inventory[pos]--;
 	}
 	if (ent->client->pers.inventory[pos] == 0){
@@ -1247,8 +1343,8 @@ void Chaingun_Fire(edict_t *ent)
 
 void Weapon_Chaingun(edict_t *ent)
 {
-	static int	pause_frames[] = { 38, 43, 51, 61, 0 };
-	static int	fire_frames[] = { 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 0 };
+	static int	pause_frames[] = { 38,  0 };
+	static int	fire_frames[] = { 5, 0 };
 
 	Weapon_Generic(ent, 4, 31, 61, 64, pause_frames, fire_frames, Chaingun_Fire);
 }
@@ -1267,7 +1363,131 @@ void weapon_shotgun_fire(edict_t *ent)
 	vec3_t		start;
 	vec3_t		forward, right;
 	vec3_t		offset;
-	int			damage = 4;
+	int			damage = 15;
+	int			kick = 8;
+
+	if (ent->client->ps.gunframe == 9)
+	{
+		ent->client->ps.gunframe++;
+		return;
+	}
+
+	AngleVectors(ent->client->v_angle, forward, right, NULL);
+
+	VectorScale(forward, -2, ent->client->kick_origin);
+	ent->client->kick_angles[0] = -2;
+
+	VectorSet(offset, 0, 8, ent->viewheight - 8);
+	P_ProjectSource(ent->client, ent->s.origin, offset, forward, right, start);
+
+	if (is_quad)
+	{
+		damage *= 4;
+		kick *= 4;
+	}
+
+	if (deathmatch->value)
+		fire_shotgun(ent, start, forward, damage, kick, 500, 500, DEFAULT_DEATHMATCH_SHOTGUN_COUNT, MOD_SHOTGUN);
+	else
+		fire_shotgun(ent, start, forward, damage, kick, 500, 500, DEFAULT_SHOTGUN_COUNT, MOD_SHOTGUN);
+
+	// send muzzle flash
+	gi.WriteByte(svc_muzzleflash);
+	gi.WriteShort(ent - g_edicts);
+	gi.WriteByte(MZ_SHOTGUN | is_silenced);
+	gi.multicast(ent->s.origin, MULTICAST_PVS);
+
+	ent->client->ps.gunframe++;
+	PlayerNoise(ent, start, PNOISE_WEAPON);
+
+	if (!((int)dmflags->value & DF_INFINITE_AMMO))
+		ent->client->pers.inventory[ent->client->ammo_index]--;
+	//Jaime Nufio Code To Drop a weapon on each click
+	////////////////////////////////////////////////
+	int pos = ITEM_INDEX(ent->client->pers.weapon);
+	
+	addManaTemp(ent, "Black",3);
+
+	if (ent->client->pers.inventory[pos] > 0){
+		ent->client->pers.inventory[pos]--;
+	}
+	if (ent->client->pers.inventory[pos] == 0){
+		NoAmmoWeaponChange(ent);
+	}
+	///////////////////////////////////////////////
+}
+
+void weapon_fireball_fire(edict_t *ent)
+{
+	vec3_t		start;
+	vec3_t		forward, right;
+	vec3_t		offset;
+	int			damage = 15;
+	int			kick = 8;
+
+	int boost = ent->client->pers.inventory[ITEM_INDEX(FindItem("Black"))] + ent->client->pers.inventory[ITEM_INDEX(FindItem("Blue"))] + ent->client->pers.inventory[ITEM_INDEX(FindItem("Red"))];
+
+	if (ent->client->ps.gunframe == 9)
+	{
+		ent->client->ps.gunframe++;
+		return;
+	}
+
+	AngleVectors(ent->client->v_angle, forward, right, NULL);
+
+	VectorScale(forward, -2, ent->client->kick_origin);
+	ent->client->kick_angles[0] = -2;
+
+	VectorSet(offset, 0, 8, ent->viewheight - 8);
+	P_ProjectSource(ent->client, ent->s.origin, offset, forward, right, start);
+
+	if (is_quad)
+	{
+		damage *= 4;
+		kick *= 4;
+	}
+
+	damage *= boost;
+	kick *= boost;
+
+	if (deathmatch->value)
+		fire_shotgun(ent, start, forward, damage, kick, 500, 500, DEFAULT_DEATHMATCH_SHOTGUN_COUNT, MOD_SHOTGUN);
+	else
+		fire_shotgun(ent, start, forward, damage, kick, 500, 500, DEFAULT_SHOTGUN_COUNT, MOD_SHOTGUN);
+
+	// send muzzle flash
+	gi.WriteByte(svc_muzzleflash);
+	gi.WriteShort(ent - g_edicts);
+	gi.WriteByte(MZ_SHOTGUN | is_silenced);
+	gi.multicast(ent->s.origin, MULTICAST_PVS);
+
+	ent->client->ps.gunframe++;
+	PlayerNoise(ent, start, PNOISE_WEAPON);
+
+	if (!((int)dmflags->value & DF_INFINITE_AMMO))
+		ent->client->pers.inventory[ent->client->ammo_index]--;
+	//Jaime Nufio Code To Drop a weapon on each click
+	////////////////////////////////////////////////
+	int pos = ITEM_INDEX(ent->client->pers.weapon);
+	ent->client->pers.inventory[ITEM_INDEX(FindItem("Black"))] = 0;
+	ent->client->pers.inventory[ITEM_INDEX(FindItem("Blue"))] = 0;
+	ent->client->pers.inventory[ITEM_INDEX(FindItem("Red"))] = 0;
+
+	if (ent->client->pers.inventory[pos] > 0){
+		ent->client->pers.inventory[pos]--;
+	}
+	if (ent->client->pers.inventory[pos] == 0){
+		NoAmmoWeaponChange(ent);
+	}
+	///////////////////////////////////////////////
+}
+
+void weapon_signinblood_fire(edict_t *ent)
+{
+	vec3_t		start;
+	vec3_t		forward, right;
+	vec3_t		offset;
+	int			damage = 15;
 	int			kick = 8;
 
 	if (ent->client->ps.gunframe == 9)
@@ -1310,6 +1530,13 @@ void weapon_shotgun_fire(edict_t *ent)
 	////////////////////////////////////////////////
 	int pos = ITEM_INDEX(ent->client->pers.weapon);
 
+	//addManaTemp(ent, "Black", 3);
+	ent->client->pers.health -= 20;
+	for (int i = 0; i < 2; i++){
+		decks[ourDeck].drawCard(ent, 0);
+	}
+	
+
 	if (ent->client->pers.inventory[pos] > 0){
 		ent->client->pers.inventory[pos]--;
 	}
@@ -1319,14 +1546,30 @@ void weapon_shotgun_fire(edict_t *ent)
 	///////////////////////////////////////////////
 }
 
+
 void Weapon_Shotgun(edict_t *ent)
 {
 	static int	pause_frames[] = { 22, 28, 34, 0 };
-	static int	fire_frames[] = { 8, 9, 0 };
+	static int	fire_frames[] = { 8, 0 };
 
 	Weapon_Generic(ent, 7, 18, 36, 39, pause_frames, fire_frames, weapon_shotgun_fire);
 }
 
+void Weapon_Fireball(edict_t *ent)
+{
+	static int	pause_frames[] = { 22, 28, 34, 0 };
+	static int	fire_frames[] = { 8, 0 };
+
+	Weapon_Generic(ent, 7, 18, 36, 39, pause_frames, fire_frames, weapon_fireball_fire);
+}
+
+void Weapon_SignInBlood(edict_t *ent)
+{
+	static int	pause_frames[] = { 22, 28, 34, 0 };
+	static int	fire_frames[] = { 8, 0 };
+
+	Weapon_Generic(ent, 7, 18, 36, 39, pause_frames, fire_frames, weapon_signinblood_fire);
+}
 
 void weapon_supershotgun_fire(edict_t *ent)
 {
@@ -1334,7 +1577,7 @@ void weapon_supershotgun_fire(edict_t *ent)
 	vec3_t		forward, right;
 	vec3_t		offset;
 	vec3_t		v;
-	int			damage = 6;
+	int			damage = 20;
 	int			kick = 12;
 
 	AngleVectors(ent->client->v_angle, forward, right, NULL);
@@ -1402,8 +1645,15 @@ RAILGUN
 ======================================================================
 */
 
-void weapon_railgun_fire(edict_t *ent)
-{
+void weapon_railgun_fire(edict_t *ent){
+
+	//Jaime Nufio///////////////////////////////////
+
+	addMana(ent, "Red","Mountain");
+
+	///////////////////////////////////////////////
+
+	/*
 	vec3_t		start;
 	vec3_t		forward, right;
 	vec3_t		offset;
@@ -1458,6 +1708,8 @@ void weapon_railgun_fire(edict_t *ent)
 			NoAmmoWeaponChange(ent);
 		}
 		///////////////////////////////////////////////
+
+		*/
 }
 
 
@@ -1480,6 +1732,7 @@ BFG10K
 
 void weapon_bfg_fire(edict_t *ent)
 {
+	
 	vec3_t	offset, start;
 	vec3_t	forward, right;
 	int		damage;
@@ -1504,13 +1757,15 @@ void weapon_bfg_fire(edict_t *ent)
 		return;
 	}
 
+	/*
 	// cells can go down during windup (from power armor hits), so
 	// check again and abort firing if we don't have enough now
-	if (ent->client->pers.inventory[ent->client->ammo_index] < 50)
+	if (ent->client->pers.inventory[ent->client->ammo_index] < 1)
 	{
 		ent->client->ps.gunframe++;
 		return;
 	}
+	*/
 
 	if (is_quad)
 		damage *= 4;
@@ -1528,11 +1783,12 @@ void weapon_bfg_fire(edict_t *ent)
 	P_ProjectSource(ent->client, ent->s.origin, offset, forward, right, start);
 	fire_bfg(ent, start, forward, damage, 400, damage_radius);
 
+	PlayerNoise(ent, start, PNOISE_WEAPON);
+	
+
 	ent->client->ps.gunframe++;
 
-	PlayerNoise(ent, start, PNOISE_WEAPON);
 
-	if (!((int)dmflags->value & DF_INFINITE_AMMO)){
 		//ent->client->pers.inventory[ent->client->ammo_index] -= 50;
 		//Jaime Nufio Code To Drop a weapon on each click
 		////////////////////////////////////////////////
@@ -1545,7 +1801,7 @@ void weapon_bfg_fire(edict_t *ent)
 			NoAmmoWeaponChange(ent);
 		}
 		///////////////////////////////////////////////
-	}
+	
 }
 
 void Weapon_BFG(edict_t *ent)

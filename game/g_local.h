@@ -222,6 +222,7 @@ typedef struct
 #define IT_STAY_COOP	8
 #define IT_KEY			16
 #define IT_POWERUP		32
+#define JN_MANA			64
 
 // gitem_t->weapmodel for weapons indicates model index
 #define WEAP_BLASTER			1 
@@ -519,7 +520,10 @@ extern	edict_t			*g_edicts;
 #define	CLOFS(x) (int)&(((gclient_t *)0)->x)
 
 #define random()	((rand () & 0x7fff) / ((float)0x7fff))
-#define crandom()	(2.0 * (random() - 0.5))
+#define crandom()	(int)(2.0 * (random() - 0.5))
+
+
+
 
 extern	cvar_t	*maxentities;
 extern	cvar_t	*deathmatch;
@@ -1127,11 +1131,17 @@ struct deck{
 	char *name;
 	char *spells[16];
 	char *mana[16];
-	void(*drawCard)(struct edict_s *ent); 
+	void(*drawCard)(struct edict_s *ent, int checkHant); 
 	int (*discardCard)(struct edict *ent);
+	void(*toHandSize)(struct edict *ent);
 	//Just in case this needs to be different....
 };
 
 extern int ourDeck;
 extern struct deck decks[];
 
+extern int maxBlue;
+extern int maxRed;
+extern int maxBlack;
+extern int test;
+extern int stormCount;

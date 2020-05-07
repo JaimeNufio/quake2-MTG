@@ -299,36 +299,82 @@ HelpComputer
 Draw help computer.
 ==================
 */
+
+
+
 void HelpComputer (edict_t *ent)
 {
-	char	string[1024];
-	char	*sk;
+	char	string[5000];
+	//char	*sk;
+	char boardState[256];
+	char deckInfo[1024];
+	sprintf(deckInfo, "The %s Deck:\n\n %s [%d]\n%s [%d]\n%s [%d]\n%s [%d]\n%s [%d]\n",
+		decks[ourDeck].name,
+		decks[ourDeck].spells[0], ent->client->pers.inventory[IndexByName(ent,decks[ourDeck].spells[0])],
+		decks[ourDeck].spells[1], ent->client->pers.inventory[IndexByName(ent, decks[ourDeck].spells[1])],
+		decks[ourDeck].spells[2], ent->client->pers.inventory[IndexByName(ent, decks[ourDeck].spells[2])],
+		decks[ourDeck].spells[3], ent->client->pers.inventory[IndexByName(ent, decks[ourDeck].spells[3])],
+		decks[ourDeck].spells[4], ent->client->pers.inventory[IndexByName(ent, decks[ourDeck].spells[4])]
+		);
+	if (ourDeck == 0){
+		
+		sprintf(boardState, "Lands In Play:\n\nMountains: %d\n Swamps: %d",
+			maxRed,//ent->client->pers.inventory[ITEM_INDEX(FindItem("Mountain"))], 
+			maxBlack//ent->client->pers.inventory[ITEM_INDEX(FindItem("Swamp"))] );
+			);
+			/*sprintf(boardState,
+			"Dark Ritual {B} | Add {B}{B}{B} | %d\n"
+			"Doom Blade  {B}{B} | Destroy target creature.| %d\n"
+			"Lightning Bolt  {R} | ~ Deals 3 damage to any target. %d\n"
+			"Goblin Lore  {R}{R} | Draw 4 cards, discard 3 cards. %d\n",
+			ent->client->pers.inventory[ITEM_INDEX(FindItem("Dark Ritual"))],
+			ent->client->pers.inventory[ITEM_INDEX(FindItem("Doom Blade"))],
+			ent->client->pers.inventory[ITEM_INDEX(FindItem("Lightning Bolt"))],
+			ent->client->pers.inventory[ITEM_INDEX(FindItem("Goblin Lore"))]
+			);*/
+	}
+	else if (ourDeck == 1){
+		sprintf(boardState, "Lands In Play:\n\nMountains: %d\n Islands: %d",
+			maxRed,//ent->client->pers.inventory[ITEM_INDEX(FindItem("Mountain"))],
+			maxBlue//ent->client->pers.inventory[ITEM_INDEX(FindItem("Island"))]);
+			);
+			/*sprintf(boardState,
+			"Ancestral Recall  {U} | Draw 3 cards. %d\n"
+			"Cyclonic Rift {U}{U}{U} | Bounce Tokens. %d\n"
+			"Lightning Bolt  {R} | ~ Deals 3 damage to any target. %d\n"
+			"Goblin Lore  {R}{R} | Draw 4 cards, discard 3 cards. %d\n",
+			ent->client->pers.inventory[ITEM_INDEX(FindItem("Ancestrall Recall"))],
+			ent->client->pers.inventory[ITEM_INDEX(FindItem("Cyclonic Rift"))],
+			ent->client->pers.inventory[ITEM_INDEX(FindItem("Lightning Bolt"))],
+			ent->client->pers.inventory[ITEM_INDEX(FindItem("Goblin Lore"))]
+			);
+			*/
 
-	if (skill->value == 0)
-		sk = "easy";
-	else if (skill->value == 1)
-		sk = "medium";
-	else if (skill->value == 2)
-		sk = "hard";
-	else
-		sk = "hard+";
+	}
+	else{
+		sprintf(boardState, "Lands In Play:\n\nIsland: %d\n Swamps: %d",
+			maxBlue,//ent->client->pers.inventory[ITEM_INDEX(FindItem("Island"))],
+			maxBlack//ent->client->pers.inventory[ITEM_INDEX(FindItem("Swamp"))]);
+			);
+	} 
 
 	// send the layout
 	Com_sprintf (string, sizeof(string),
-		"xv 32 yv 8 picn help "			// background
-		"xv 202 yv 12 string2 \"%s\" "		// skill
-		"xv 0 yv 24 cstring2 \"%s\" "		// level name
-		"xv 0 yv 54 cstring2 \"%s\" "		// help 1
-		"xv 0 yv 110 cstring2 \"%s\" "		// help 2
-		"xv 50 yv 164 string2 \" kills     goals    secrets\" "
-		"xv 50 yv 172 string2 \"%3i/%3i     %i/%i       %i/%i\" ", 
-		sk,
-		level.level_name,
-		game.helpmessage1,
-		game.helpmessage2,
-		level.killed_monsters, level.total_monsters, 
-		level.found_goals, level.total_goals,
-		level.found_secrets, level.total_secrets);
+		//"xv 32 yv 8 picn help "			// background
+	//	"xv 202 yv 12 string2 \"%s\" "		// skill
+		"xv 0 yv 50 cstring2 \"%s\" "		// level name
+		"xv 0 yv 150 cstring2 \"%s\" "		// help 1
+		//"xv 0 yv 110 cstring2 \"%s\" "		// help 2
+		//"xv 50 yv 164 string2 \" kills     goals    secrets\" "
+		//"xv 50 yv 172 string2 \"%3i/%3i     %i/%i       %i/%i\" " 
+		,
+		//sk,
+		deckInfo,
+		boardState
+		//level.killed_monsters, level.total_monsters, 
+		//level.found_goals, level.total_goals,
+		//level.found_secrets, level.total_secrets
+		);
 
 	gi.WriteByte (svc_layout);
 	gi.WriteString (string);

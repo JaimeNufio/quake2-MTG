@@ -17,8 +17,16 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 */
+
 #include "g_local.h"
 #include "m_player.h"
+#include <time.h> 
+
+test = 0;
+maxBlack = 0;
+maxBlue = 0;
+maxRed = 0;
+stormCount = 0;
 
 void ClientUserinfoChanged (edict_t *ent, char *userinfo);
 
@@ -420,7 +428,7 @@ void TossClientWeapon (edict_t *self)
 	item = self->client->pers.weapon;
 	if (! self->client->pers.inventory[self->client->ammo_index] )
 		item = NULL;
-	if (item && (strcmp (item->pickup_name, "Blaster") == 0))
+	if (item && (strcmp (item->pickup_name, "grapeshot") == 0))
 		item = NULL;
 
 	if (!((int)(dmflags->value) & DF_QUAD_DROP))
@@ -616,21 +624,25 @@ void InitClientPersistant(gclient_t *client)
 	//const char *hand[7];
 
 	int pos = 8; //item index of item to supply
-	int diceRoll = 0;
 	char *name;
-	//srand(42069);
 
-	ourDeck = 0; //TODO, modify how this is set.
+	time_t t;
+	srand((unsigned)time(&t));
+
+	maxBlack = 0;
+	maxBlue = 0;
+	maxRed = 0;
+	client->pers.inventory[ITEM_INDEX(FindItem("grapeshot"))] = 1;
+
+	ourDeck = rand() % 2; //TODO, modify how this is set.
 	for (int i = 0; i < 7; i++){
-		name = "Lightning Bolt";
+		//name = "Lightning Bolt";
 
 		if (rand() % 10 >= 4){ //60% chance to draw a spell
-			diceRoll = rand() % 4;
-			name = decks[ourDeck].spells[diceRoll];
+			name = decks[ourDeck].spells[rand()%3];
 		}
 		else{
-			diceRoll = rand() % 2;
-			name = decks[ourDeck].mana[diceRoll];
+			name = decks[ourDeck].mana[rand()%1];
 		}
 
 
@@ -1611,15 +1623,42 @@ This will be called once for each client frame, which will
 usually be a couple times for each server frame.
 ==============
 */
-void ClientThink (edict_t *ent, usercmd_t *ucmd)
+
+int lastTime;
+int seconds;
+
+void ClientThink(edict_t *ent, usercmd_t *ucmd)
 {
 	gclient_t	*client;
 	edict_t	*other;
 	int		i, j;
 	pmove_t	pm;
-
 	level.current_entity = ent;
 	client = ent->client;
+
+	if (seconds == 0 ){
+		
+		for (int i = 8; i < 23;i++){
+			if(client->pers.inventory[i] <= 0){
+				client->pers.inventory[i] = 0;
+			}
+		}
+
+		decks[ourDeck].toHandSize(ent);
+		seconds = 30; //seconds between each upkeep
+		gi.cprintf(ent, PRINT_HIGH, "Upkeep/Untap/Draw!\n");
+		client->pers.inventory[ITEM_INDEX(FindItem("Black"))] = maxBlack;
+		client->pers.inventory[ITEM_INDEX(FindItem("Blue"))] = maxBlue;
+		client->pers.inventory[ITEM_INDEX(FindItem("Red"))] = maxRed;
+		stormCount = 0;
+		decks[ourDeck].drawCard(ent,1);
+	}else if (time(NULL) >= (lastTime + 1) || time == 0){
+		seconds--;
+		if (seconds % 5 == 0 && seconds != 0){
+			gi.cprintf(ent, PRINT_HIGH, "Seconds until next Upkeep/Untap/Draw: %d\n", seconds);
+		}
+		lastTime = time(NULL);
+	}
 
 	if (level.intermissiontime)
 	{
