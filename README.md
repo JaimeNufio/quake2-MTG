@@ -15,7 +15,9 @@
 * Pressing F1 will give some more organized info on your hand and board state.
 * Players may play any number of lands per turn.
 
-![alt text](https://media.magic.wizards.com/images/featured/EN_Liliana_PWCard_Vess_InlineB_2.png "lily")
+
+
+![alt text](https://img.pngio.com/duel-decks-ajani-vs-nicol-bolas-magic-the-gathering-nicol-bolas-png-829_420.png "Bolas")
 ## Weapons/Spells:
 * Ancestral Recall {U} - Draw 3 cards.
 * Cyclonic Rift {U}{U}{U}{U}{U}{U} - "Return each creature you don't control to it's owner's hand" (It's just the BFG.)
@@ -27,7 +29,6 @@
 * Dark Ritual {B} - Add {B}{B}{B}.
 * "Grapeshot" {0} - Deals X damage, where X is half of the number of times Grapeshot has been cast this turn. 
 
-![alt text](https://img.pngio.com/duel-decks-ajani-vs-nicol-bolas-magic-the-gathering-nicol-bolas-png-829_420.png "Bolas")
 ## Lands:
 *naturally...*
 
@@ -35,7 +36,6 @@
 * Island
 * Swamp
 
-![alt text](https://www.pngkit.com/png/full/145-1458869_jace-beleren-ultra-pro-magic-the-gathering-shadows.png "jace")
 ## Commands: 
 ### debug
 Debug mode toggle. (Toggle cleanup step.)
