@@ -7,7 +7,6 @@
 * Add the config to the mod folder
 * drag .dll to the mod folder
 
-![alt text](https://library.kissclipart.com/20181112/bvq/kissclipart-mtg-angel-token-art-clipart-magic-the-gathering-s-3c95ca5225c715fb.jpg "serra angel")
 ## Overview:
 * Guns are replaced by spells and lands.
 * There are three colors of lands, and 3 decks in this mod. These decks are of two colors each. (Rakdos, Izzet, Dimir)
@@ -16,8 +15,7 @@
 * Pressing F1 will give some more organized info on your hand and board state.
 * Players may play any number of lands per turn.
 
-![alt text]( http://media.wizards.com/2015/images/daily/cardart_EizdEEZTUQ.png "jace")
-
+![alt text](https://media.magic.wizards.com/images/featured/EN_Liliana_PWCard_Vess_InlineB_2.png "lily")
 ## Weapons/Spells:
 * Ancestral Recall {U} - Draw 3 cards.
 * Cyclonic Rift {U}{U}{U}{U}{U}{U} - "Return each creature you don't control to it's owner's hand" (It's just the BFG.)
@@ -29,7 +27,7 @@
 * Dark Ritual {B} - Add {B}{B}{B}.
 * "Grapeshot" {0} - Deals X damage, where X is half of the number of times Grapeshot has been cast this turn. 
 
-![alt text](https://i0.wp.com/mtgazone.com/wp-content/uploads/2019/12/historic-grixis-control.jpg?fit=626%2C457&ssl=1 "Bolas")
+![alt text](https://img.pngio.com/duel-decks-ajani-vs-nicol-bolas-magic-the-gathering-nicol-bolas-png-829_420.png "Bolas")
 ## Lands:
 *naturally...*
 
@@ -37,10 +35,8 @@
 * Island
 * Swamp
 
+![alt text](https://www.pngkit.com/png/full/145-1458869_jace-beleren-ultra-pro-magic-the-gathering-shadows.png "jace")
 ## Commands: 
-
-![alt text](https://lh3.googleusercontent.com/proxy/ZC8OvIHgXCA31uGmwt2Nl9_nHDTYMdS69SBUG72CG7nn0ynNOA8l62MHWRaYl6yJfqXk2YUW61UChxJKp_fJrjnpgMj_OXiBFYIIWeAdOGyAUTicPEYKrpOeWebCJO0MVOVerfBZudXvgphH2J0 "omg :o")
-
 ### debug
 Debug mode toggle. (Toggle cleanup step.)
 
@@ -64,7 +60,4 @@ Discards a card at random.
 
 ### demo
 Distribute cards for demonstration purposes. (Recommended to use debug mode.)
-
-![alt text] (https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcTf4o-3Ua7-tYHjjctk05H4bR1H6sBtRgSbQOwh3As8QyrUTriq&usqp=CAU "ravnica")
-
 
