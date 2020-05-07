@@ -1,6 +1,6 @@
 ![alt text](https://media.wizards.com/2018/images/daily/gcYrmy5q9f.png "MTG Logo")
 
-# Magic: The Gathering
+# ...But in Quake!
 
 ## How to Install:
 * Compile the quake2.sln
@@ -28,12 +28,14 @@
 * "Grapeshot" {0} - Deals X damage, where X is half of the number of times Grapeshot has been cast this turn. 
 
 ## Lands:
+![alt text](https://i0.wp.com/mtgazone.com/wp-content/uploads/2019/12/historic-grixis-control.jpg?fit=626%2C457&ssl=1 "Bolas")
+
+
 *naturally...*
 
 * Mountain
 * Island
 * Swamp
-![alt text](https://i0.wp.com/mtgazone.com/wp-content/uploads/2019/12/historic-grixis-control.jpg?fit=626%2C457&ssl=1 "Bolas")
 
 ## Commands: 
 
