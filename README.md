@@ -1,9 +1,11 @@
+![alt text](https://media.wizards.com/2018/images/daily/gcYrmy5q9f.png "MTG Logo")
+
 # Magic: The Gathering
 
 ## How to Install:
-..* Compile the quake2.sln
-..* Add the config to the mod folder
-..* drag .dll to the mod folder
+* Compile the quake2.sln
+* Add the config to the mod folder
+* drag .dll to the mod folder
 
 
 ## Overview:
@@ -31,6 +33,7 @@
 * Mountain
 * Island
 * Swamp
+![alt text](https://i0.wp.com/mtgazone.com/wp-content/uploads/2019/12/historic-grixis-control.jpg?fit=626%2C457&ssl=1 "Bolas")
 
 ## Commands: 
 
@@ -46,16 +49,16 @@ Selects the deck. Doesn't clear hand, but will affect future draws.
 ### countdeck
 Reports cards in hand.
 
-## lands
+### lands
 Reports number lands in play.
 
-## draw
+### draw
 Draw a card.
 
-## discard
+### discard
 Discards a card at random.
 
-##demo
+### demo
 Distribute cards for demonstration purposes. (Recommended to use debug mode.)
 
 
