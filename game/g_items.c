@@ -1499,7 +1499,7 @@ gitem_t	itemlist[] =
 		"models/items/ammo/grenades/medium/tris.md2", 0,
 		"models/weapons/v_handgr/tris.md2",
 		/* icon */		"a_grenades",
-		/* pickup */	"Fireball",
+		/* pickup */	"Garbage",
 		/* width */		3,
 		1,
 		"Red",
@@ -2351,7 +2351,7 @@ int discardCard(struct edict_s *ent){
 	if (Cmd_CardsInHand_f(ent)>1){
 		do{
 			pos = 8 + (rand() % 12);
-			if (ent->client->pers.inventory[pos] > 0 && pos != IndexByName(ent,"Goblin Lore")){
+			if (ent->client->pers.inventory[pos] > 0 && pos != IndexByName(ent, "Goblin Lore") && pos != IndexByName(ent, "Garbage")){
 				//Goblin Lore will, on ocassion, try to delete itself. Let's just avoid that.
 				deletable = 1;
 			}

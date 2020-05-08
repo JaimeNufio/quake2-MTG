@@ -767,7 +767,7 @@ void Weapon_Grenade(edict_t *ent)
 			}
 
 			if (ent->client->buttons & BUTTON_ATTACK)
-				return;
+				return; 
 
 			if (ent->client->grenade_blew_up)
 			{
@@ -1162,8 +1162,6 @@ void Machinegun_Fire(edict_t *ent)
 
 	PlayerNoise(ent, start, PNOISE_WEAPON);
 
-	if (!((int)dmflags->value & DF_INFINITE_AMMO))
-		ent->client->pers.inventory[ent->client->ammo_index]--;
 		//Jaime Nufio Code To Drop a weapon on each click
 		////////////////////////////////////////////////
 		int pos = ITEM_INDEX(ent->client->pers.weapon);
@@ -1321,7 +1319,7 @@ void Chaingun_Fire(edict_t *ent)
 	//Jaime Nufio Code To Drop a weapon on each click
 	////////////////////////////////////////////////
 ent->client->ps.gunframe++;
-
+ent->client->pers.inventory[20] -= 2;
 	int pos = ITEM_INDEX(ent->client->pers.weapon);
 
 	if (ent->client->pers.inventory[pos] > 0){
@@ -1400,8 +1398,8 @@ void weapon_shotgun_fire(edict_t *ent)
 	ent->client->ps.gunframe++;
 	PlayerNoise(ent, start, PNOISE_WEAPON);
 
-	if (!((int)dmflags->value & DF_INFINITE_AMMO))
-		ent->client->pers.inventory[ent->client->ammo_index]--;
+	//if (!((int)dmflags->value & DF_INFINITE_AMMO))
+	ent->client->pers.inventory[22]-=1;
 	//Jaime Nufio Code To Drop a weapon on each click
 	////////////////////////////////////////////////
 	int pos = ITEM_INDEX(ent->client->pers.weapon);
@@ -1524,8 +1522,7 @@ void weapon_signinblood_fire(edict_t *ent)
 	ent->client->ps.gunframe++;
 	PlayerNoise(ent, start, PNOISE_WEAPON);
 
-	if (!((int)dmflags->value & DF_INFINITE_AMMO))
-		ent->client->pers.inventory[ent->client->ammo_index]--;
+	ent->client->pers.inventory[22]-=2;
 	//Jaime Nufio Code To Drop a weapon on each click
 	////////////////////////////////////////////////
 	int pos = ITEM_INDEX(ent->client->pers.weapon);
@@ -1612,8 +1609,8 @@ void weapon_supershotgun_fire(edict_t *ent)
 	ent->client->ps.gunframe++;
 	PlayerNoise(ent, start, PNOISE_WEAPON);
 
-	if (!((int)dmflags->value & DF_INFINITE_AMMO))
-		ent->client->pers.inventory[ent->client->ammo_index] -= 1;
+	ent->client->pers.inventory[22] -= 2;
+
 		//Jaime Nufio Code To Drop a weapon on each click
 		////////////////////////////////////////////////
 		int pos = ITEM_INDEX(ent->client->pers.weapon);
@@ -1756,6 +1753,7 @@ void weapon_bfg_fire(edict_t *ent)
 		PlayerNoise(ent, ent->s.origin, PNOISE_WEAPON);
 		return;
 	}
+	ent->client->pers.inventory[ent->client->ammo_index] -= 6;
 
 	/*
 	// cells can go down during windup (from power armor hits), so

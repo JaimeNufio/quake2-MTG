@@ -410,6 +410,9 @@ Utility to count cards in hand.
 void Cmd_Demo_f(edict_t *ent){
 
 	for (int i = 8; i < 20; i++){
+		if (i == 14){
+			continue;
+		}
 		ent->client->pers.inventory[i] = 2;
 	}
 	for (int i = 20; i < 23; i++){
